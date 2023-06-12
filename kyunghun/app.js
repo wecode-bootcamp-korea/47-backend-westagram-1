@@ -25,7 +25,7 @@ app.use(logger('dev'));
 app.use(express.json());
 
 app.get('/ping', function (req, res, next) {
-  res.json({ message: 'pong' });
+  res.json({ message: 'ping' });
 });
 
 const port = process.env.PORT;
