@@ -112,7 +112,7 @@ zsdoc/data
 !/tests/_output/.gitkeep
 
 .env
-db/migrations/schema.sql
+db/schema.sql
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
