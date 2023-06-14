@@ -14,9 +14,14 @@ const appDataSource = new DataSource({
   database: process.env.DB_DATABASE,
 });
 
-appDataSource.initialize().then(() => {
-  console.log('Data Source has been initialized!');
-});
+appDataSource
+    .initialize()
+    .then(() => {
+        console.log('Data Source has been initialized!');
+    })
+    .catch((err) => {
+        console.log("Error during Data Source initialization:", err);
+    });
 
 const app = express();
 
