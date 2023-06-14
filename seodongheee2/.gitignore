@@ -112,5 +112,7 @@ zsdoc/data
 !/tests/_output/.gitkeep
 
 .env
+db/migrations/schema.sql
+
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,zsh,linux
