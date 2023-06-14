@@ -40,7 +40,7 @@ app.listen(3000, function () {
 });
 
 app.post('/users/signup', async (req, res) => {
-  const {name, email, profile_image, password, phone_number } = req.body
+  const {name, email, profileImage, password, phoneNumber } = req.body
 
   await appDataSource.query(
       `INSERT INTO users(
@@ -50,7 +50,7 @@ app.post('/users/signup', async (req, res) => {
           password,
           phone_number
       ) VALUES ( ?, ?, ?, ?, ?);
-      `, [name, email, profile_image, password, phone_number]
+      `, [name, email, profileImage, password, phoneNumber]
   );
   res.status(201).json({ message: "sign-up complete" });
 });
