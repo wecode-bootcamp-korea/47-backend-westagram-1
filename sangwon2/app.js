@@ -4,6 +4,7 @@ import express from 'express';
 import cors from 'cors';
 import logger from 'morgan';
 import { DataSource } from 'typeorm';
+
 dotenv.config();
 
 const appDataSource = new DataSource({
@@ -36,4 +37,20 @@ app.get("/ping", function (req, res, next) {
 
 app.listen(3000, function () {
   console.log("server listening on port 3000");
+});
+
+app.post('/users/signup', async (req, res) => {
+  const {name, email, profile_image, password, phone_number } = req.body
+
+  await appDataSource.query(
+      `INSERT INTO users(
+          name,
+          email,
+          profile_image,
+          password,
+          phone_number
+      ) VALUES ( ?, ?, ?, ?, ?);
+      `, [name, email, profile_image, password, phone_number]
+  );
+  res.status(201).json({ message: "sign-up complete" });
 });
