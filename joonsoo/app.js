@@ -45,7 +45,7 @@ app.get('/users', async function (req, res, next) {
   res.json({ data: users });
 });
 
-app.post('/users', async function (req, res, next) {
+app.post('/users', async function (req, res) {
   console.log(req.body);
   const { name, email, profile_image, password } = req.body;
 
@@ -66,6 +66,27 @@ app.post('/users', async function (req, res, next) {
     [name, email, profile_image, password]
   );
   res.json({ message: 'SUCCESS_CREATE_USER' });
+});
+
+app.post('/posts', async function (req, res) {
+  console.log(req.body);
+  const { title, content, user_id } = req.body;
+
+  await appDataSource.query(
+    `
+    INSERT INTO posts(
+      title,
+      content,
+      user_id
+    ) VALUES (
+      ?,
+      ?,
+      ?
+    )
+  `,
+    [title, content, user_id]
+  );
+  res.json({ message: 'SUCCESS_CREATE_POST' });
 });
 
 const port = process.env.PORT;
