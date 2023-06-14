@@ -1,11 +1,11 @@
 -- migrate:up
-create table comments(
-    id int not null auto_increment,
-    content varchar(3000) null,
-    user_id int not null ,
-    created_at timestamp not null default current_timestamp,
-    updated_at timestamp null on update current_timestamp,
-    primary key (id),
+CREATE TABLE comments(
+    id INT NOT NULL AUT0_INCREMENT,
+    content VARCHAR(3000) NULL,
+    user_id INT NOT NULL ,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id));    
 
 -- migrate:down
