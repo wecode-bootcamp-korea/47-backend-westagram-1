@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-
-
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
@@ -16,10 +14,6 @@ const appDataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-});
-
-appDataSource.initialize().then(() => {
-  console.log('Data Source has been initialized!');
 });
 
 appDataSource
@@ -59,15 +53,31 @@ app.post('/users', async function (req, res, next) {
         ?,
         ?
       )
-    `,
-
+    `,[])
+})
     
-      [name ,email,profile_image, password]
-    );
-    res.json({ message: 'Sign-up Complete, Welcome!!' });
+
+app.post('/posts', async function (req, res) {
+
+  const { title,user_id} = req.body;
+  
+    await appDataSource.query(
+      `
+      INSERT INTO posts (
+        title,
+        user_id
+      ) VALUES (
+        ?,
+        ?
+      )
+    `,[ title,user_id]
+  );
+  
+  res.json({ message: 'postCreated' });
+})
 
 const port = process.env.PORT;
 
 app.listen(port, function () {
   console.log(`server listening on port ${port}`);
-})});
+})
