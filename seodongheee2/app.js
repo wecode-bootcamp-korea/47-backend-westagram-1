@@ -18,8 +18,6 @@ const appDataSource = new DataSource({
   database: process.env.DB_DATABASE,
 });
 
-
-
 appDataSource.initialize().then(() => {
   console.log('Data Source has been initialized!');
 });
@@ -33,7 +31,6 @@ appDataSource
         console.error("Error during Data Source initialization:", err)
     })
 
-
 const app = express();
 
 app.use(cors());
@@ -42,44 +39,6 @@ app.use(express.json());
 
 app.get('/ping', function (req, res, next) {
   res.json({ message: 'pong' });
-});
-
-app.get('/users', async function (req, res, next) {
-  const users = await appDataSource.query(`
-    SELECT
-      id,
-      email,
-      password
-    FROM users
-  `);
-  res.json({ data: users });
-});
-
-app.post('/users', async function (req, res, next) {
-  console.log(req.body);
-  const { email, password } = req.body;
-
-  try {
-    await appDataSource.query(
-      `
-      INSERT INTO users (
-        email,
-        password
-      ) VALUES (
-        ?,
-        ?
-      )
-    `,
-      [email, password]
-    );
-    res.json({ message: 'SUCCESS_CREATE_USER' });
-  } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-      res.status(400).json({ message: 'DUPLICATE_USER' });
-    } else {
-      next(error);
-    }
-  }
 });
 
 
