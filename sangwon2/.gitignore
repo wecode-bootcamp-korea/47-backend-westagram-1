@@ -30,7 +30,7 @@ Icon
 ._*
 
 # schema
-db/shema.sql
+db/schema.sql
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
