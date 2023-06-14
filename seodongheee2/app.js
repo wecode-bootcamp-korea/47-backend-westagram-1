@@ -41,6 +41,46 @@ app.get('/ping', function (req, res, next) {
   res.json({ message: 'pong' });
 });
 
+app.get('/users', async function (req, res, next) {
+  const users = await appDataSource.query(`
+    SELECT
+      name,
+      email,
+      profile_image,
+      password
+    FROM users
+  `);
+  res.json({ data: users });
+});
+app.post('/users', async function (req, res, next) {
+  console.log(req.body);
+  const { name,email,profile_image, password } = req.body;
+  try {
+    await appDataSource.query(
+      `
+      INSERT INTO users (
+        name,
+        email,
+        profile_image,
+        password
+      ) VALUES (
+        ?,
+        ?,
+        ?,
+        ?
+      )
+    `,
+      [name ,email, profile_image, password]
+    );
+    res.json({ message: 'SUCCESS_CREATE_USER' });
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+      res.status(400).json({ message: 'DUPLICATE_USER' });
+    } else {
+      next(error);
+    }
+  }
+});
 
 const port = process.env.PORT;
 app.listen(port, function () {
