@@ -55,7 +55,7 @@ app.post('/users/signup', async (req, res) => {
 });
 
 app.post('/users/posts', async (req, res) => {
-  const { userId, postImage, postPG } = req.body;
+  const { userId, postImage, postText } = req.body;
 
   await appDataSource.query(`
     INSERT INTO posts (
@@ -63,7 +63,7 @@ app.post('/users/posts', async (req, res) => {
       post_image,
       post_paragraph
     ) VALUES (?, ?, ?);
-  `, [userId, postImage, postPG]);
+  `, [userId, postImage, postText]);
 
   res.status(201).json({ message: 'postCreated' });
 });
@@ -108,11 +108,14 @@ app.get('/users/:userID/posts', async (req, res) => {
       GROUP BY users.id, users.profile_image
     `, [userID]);
 
+    const [firstPost] = viewPosts;
+    const {userId, userProfileImage, postings } = firstPost  || {};      
+
     const transformedData = {
       data: {
-        userId: viewPosts[0].userId,
-        userProfileImage: viewPosts[0].userProfileImage,
-        postings: JSON.parse(viewPosts[0].postings)
+        userId,
+        userProfileImage,
+        postings: postings ? JSON.parse(postings) : []
       }
     };
 
