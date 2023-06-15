@@ -104,6 +104,14 @@ app.get('/posts', async function (req, res, next) {
   res.json({ data: posts });
 });
 
+app.get('')
+
+
+
+
+
+
+
 const port = process.env.PORT;
 app.listen(port, function () {
   console.log(`server listening on port ${port}`);
