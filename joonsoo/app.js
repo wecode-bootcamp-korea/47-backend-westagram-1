@@ -89,6 +89,21 @@ app.post('/posts', async function (req, res) {
   res.json({ message: 'SUCCESS_CREATE_POST' });
 });
 
+app.get('/posts', async function (req, res, next) {
+  const posts = await appDataSource.query(
+    `
+    SELECT
+      posts.user_id AS userId,
+			users.profile_image AS userProfileImage,      
+			posts.id AS postingId,
+			posts.title AS postingTitle,
+			posts.content As postingContent
+    FROM posts
+		INNER JOIN users ON posts.user_id = users.id
+  `);
+  res.json({ data: posts });
+});
+
 const port = process.env.PORT;
 app.listen(port, function () {
   console.log(`server listening on port ${port}`);
