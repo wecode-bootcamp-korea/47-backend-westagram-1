@@ -29,10 +29,6 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 
-app.get('/ping', function (req, res, next) {
-  res.json({ message: 'ping' });
-});
-
 app.get('/users', async function (req, res, next) {
   const users = await appDataSource.query(
     `
@@ -46,7 +42,7 @@ app.get('/users', async function (req, res, next) {
 });
 
 app.post('/users', async function (req, res, next) {
-  const { name, email, profile_image, password } = req.body;
+  const { name, email, profileImage, password } = req.body;
   
   try {
   await appDataSource.query(
@@ -63,7 +59,7 @@ app.post('/users', async function (req, res, next) {
       ?
     )
   `,
-    [name, email, profile_image, password]
+    [name, email, profileImage, password]
   );
   res.status(201).json({ message: 'SUCCESS_CREATE_USER' });
 } catch (error) {
