@@ -19,10 +19,10 @@ const appDataSource = new DataSource({
 appDataSource
     .initialize()
     .then(() => {
-        console.log("Data Source has been initialized!")
+        console.log("Data Source has been initialized!");
     })
     .catch((err) => {
-        console.error("Error during Data Source initialization:", err)
+        console.error("Error during Data Source initialization:", err);
     })
 
 const app = express();
@@ -31,40 +31,16 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 
-app.get('/ping', function (req, res, next) {
-  res.json({ message: 'pong' });
-});
-
-
-app.get('/postdata', async function (req, res, next) {
-  const postdata = await appDataSource.query(`
-    SELECT
-    users.id AS userId,
-    users.profile_image AS userProfileImage,
-    posts.id AS postingId,
-    posts.posting_image_url AS postingImageUrl,
-    posts.content AS PostingContent
-    FROM
-    users
-    INNER JOIN posts ON users.id = posts.user_id
-  `);
-  res.json({ data: postdata});
+app.get('/ping', function (req, res)  {
+  res.json({ message : 'pong' });
 });
 
 
 
-
-
-
-
-
-
-
-app.post('/users', async function (req, res, next) {
- 
-  const { name,email,profile_image, password } = req.body;
-  
-    await appDataSource.query(
+app.post('/users', async function (req, res) {
+   const { name,email,profile_image, password } = req.body;
+   
+   await appDataSource.query(
       `
       INSERT INTO users (
         name,
@@ -72,35 +48,56 @@ app.post('/users', async function (req, res, next) {
         profile_image,
         password
       ) VALUES (
-        ?,
-        ?,
-        ?,
-        ?
+        ?,?,?,?
       )
-    `,[])
-})
+    `,
+    [name, email,profile_image,password])
     
+     res.status(201).json({ message: 'sign -up welcome!' });
+      });
+
+
 
 app.post('/posts', async function (req, res) {
+        console.log(req.body);
+        const { title,content,user_id,posting_image_url} = req.body;
+        
+      const posts = await appDataSource.query(
+           `
+         INSERT INTO posts (
+         title,
+         content,
+         user_id,
+         posting_image_url
+         ) VALUES (
+         ?,?,?,?
+           )
+         `,
+       [title, content,user_id,posting_image_url]);
+         
+       res.json({ message: 'Created Your Post!!' });
+       });
 
-  const { title,user_id} = req.body;
-  
-    await appDataSource.query(
-      `
-      INSERT INTO posts (
-        title,
-        user_id
-      ) VALUES (
-        ?,
-        ?
-      )
-    `,[ title,user_id]
-  );
-  
-  res.json({ message: 'postCreated' });
-})
+  app.get('/postdata', async function (req, res) {
+      const postdata = await appDataSource.query(
+              `
+              SELECT
+              users.id AS userId,
+              users.profile_image AS userProfileImage,
+              posts.id AS postingId,
+              posts.posting_image_url AS PostingImageUrl,
+              posts.content AS PostingContent
+              FROM
+              users, posts
+              WHERE
+              users.id = posts.id
+            `);
+            res.status(200).json({ data: postdata});
+          });
 
-const port = process.env.PORT || 3000;
-app.listen(port, function () {
-  console.log(`server listening on port ${port}`);
+
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
+  console.log(`server listening on port ${PORT}`);
 });
