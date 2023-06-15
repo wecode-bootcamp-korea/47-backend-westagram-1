@@ -79,13 +79,13 @@ app.get('/users/posts', async (req, res) => {
     res.status(200).json({ data: posts });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: '서버 오류났어 ㅠㅠ' });
+    res.status(400).json({ message: '정신 차려 상원아' });
   }
 });
 
 app.get('/users/posts/search', async (req, res) => {
   try {
-    const Viewposts = await appDataSource.query(`
+    const viewPosts = await appDataSource.query(`
       SELECT
         users.id AS userId,
         posts.id AS postingId,
@@ -93,11 +93,13 @@ app.get('/users/posts/search', async (req, res) => {
         posts.post_paragraph AS postingContent
       FROM users
         INNER JOIN posts ON posts.user_id = users.id
+      Where 
+        users.id = 1
 `);
 
-    res.status(200).json({ data: Viewposts });
+    res.status(200).json({ data: viewPosts });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: '정신차려 상원아' });
+    res.status(400).json({ message: '정신차려 상원아' });
   }
 });
