@@ -52,7 +52,6 @@ app.post('/users/signup', async (req, res) => {
       ) VALUES ( ?, ?, ?, ?, ?);
       `, [name, email, profileImage, password, phoneNumber]
   );
-  res.status(201).json({ message: 'userCreated' });
 });
 
 app.post('/users/posts', async (req, res) => {
