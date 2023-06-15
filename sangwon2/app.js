@@ -86,42 +86,39 @@ app.get('/posts', async (req, res) => {
   }
 });
 
-app.get('/users/:userID/posts', async (req, res) => {
+app.get("/users/:userID/posts", async (req, res) => {
   try {
     const userID = req.params.userID;
-
-    const viewPosts = await appDataSource.query(`
-      SELECT
-        users.id AS userId,
-        users.profile_image AS userProfileImage,
-        JSON_ARRAYAGG(
-          JSON_OBJECT(
-            'postingId', posts.id,
-            'postingImageUrl', posts.post_image,
-            'postingContent', posts.post_paragraph
-          )
-        ) AS postings
-      FROM users
-        INNER JOIN posts ON posts.user_id = users.id
-      WHERE 
-        users.id = ?
-      GROUP BY users.id, users.profile_image
-    `, [userID]);
+    const viewPosts = await appDataSource.query(
+      `
+        SELECT
+          users.id AS userId,
+          users.profile_image AS userProfileImage,
+          JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'postingId', posts.id,
+              'postingImageUrl', posts.post_image,
+              'postingContent', posts.post_paragraph
+            )
+          ) AS postings
+        FROM users
+          INNER JOIN posts ON posts.user_id = users.id
+        WHERE
+          users.id = ?
+        GROUP BY users.id, users.profile_image
+      `,
+      [userID]
+    );
 
     const [firstPost] = viewPosts;
-    const {userId, userProfileImage, postings } = firstPost  || {};      
-
-    const transformedData = {
-      data: {
-        userId,
-        userProfileImage,
-        postings: postings ? JSON.parse(postings) : []
-      }
-    };
-
-    res.status(200).json(transformedData);
+    const {userId, userProfileImage, postings } = firstPost || {};
+    res.status(200).json({
+      userId,
+      userProfileImage,
+      postings: postings ? JSON.parse(postings) : [],
+    });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ message: '400_BAD_REQUEST'});
+    res.status(400).json({ message: "400_BAD_REQUEST" });
   }
 });
