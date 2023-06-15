@@ -47,7 +47,8 @@ app.get('/users', async function (req, res, next) {
 
 app.post('/users', async function (req, res, next) {
   const { name, email, profile_image, password } = req.body;
-
+  
+  try {
   await appDataSource.query(
     `
     INSERT INTO users(
@@ -64,7 +65,11 @@ app.post('/users', async function (req, res, next) {
   `,
     [name, email, profile_image, password]
   );
-  res.json({ message: 'SUCCESS_CREATE_USER' });
+  res.status(201).json({ message: 'SUCCESS_CREATE_USER' });
+} catch (error) {
+  console.error('ERROR_DURING_USER_CREATION:', error);
+  res.status(500).json({message: 'FAILED_CREATE_USER'});
+}
 });
 
 const port = process.env.PORT;
