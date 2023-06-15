@@ -36,20 +36,27 @@ app.get('/ping', function (req, res, next) {
 });
 
 
-// app.get('/postdata', async function (req, res, next) {
-//   const postdata = await appDataSource.query(`
-//     SELECT 
-//     users.id AS userId,
-//     users.profile_image AS userProfileImage, 
-//     posts.id AS postingId,
-//     posts.posting_image_url AS postingImageUrl,
-//     posts.content AS PostingContent
-//     FROM 
-//     users
-//     INNER JOIN posts ON users.id = posts.user_id
-//   `);
-//   res.json({ data: postdata});
-// });
+app.get('/postdata', async function (req, res, next) {
+  const postdata = await appDataSource.query(`
+    SELECT
+    users.id AS userId,
+    users.profile_image AS userProfileImage,
+    posts.id AS postingId,
+    posts.posting_image_url AS postingImageUrl,
+    posts.content AS PostingContent
+    FROM
+    users
+    INNER JOIN posts ON users.id = posts.user_id
+  `);
+  res.json({ data: postdata});
+});
+
+
+
+
+
+
+
 
 
 
@@ -93,8 +100,7 @@ app.post('/posts', async function (req, res) {
   res.json({ message: 'postCreated' });
 })
 
-const port = process.env.PORT;
-
+const port = process.env.PORT || 3000;
 app.listen(port, function () {
   console.log(`server listening on port ${port}`);
-})
+});
