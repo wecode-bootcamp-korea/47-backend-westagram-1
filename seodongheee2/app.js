@@ -36,6 +36,23 @@ app.get('/ping', function (req, res, next) {
 });
 
 
+// app.get('/postdata', async function (req, res, next) {
+//   const postdata = await appDataSource.query(`
+//     SELECT 
+//     users.id AS userId,
+//     users.profile_image AS userProfileImage, 
+//     posts.id AS postingId,
+//     posts.posting_image_url AS postingImageUrl,
+//     posts.content AS PostingContent
+//     FROM 
+//     users
+//     INNER JOIN posts ON users.id = posts.user_id
+//   `);
+//   res.json({ data: postdata});
+// });
+
+
+
 app.post('/users', async function (req, res, next) {
  
   const { name,email,profile_image, password } = req.body;
