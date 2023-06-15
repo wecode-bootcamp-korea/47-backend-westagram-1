@@ -46,7 +46,6 @@ app.get('/users', async function (req, res, next) {
 });
 
 app.post('/users', async function (req, res, next) {
-  console.log(req.body);
   const { name, email, profile_image, password } = req.body;
 
   await appDataSource.query(
