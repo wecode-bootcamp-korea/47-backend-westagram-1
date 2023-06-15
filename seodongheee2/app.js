@@ -16,15 +16,13 @@ const appDataSource = new DataSource({
   database: process.env.DB_DATABASE,
 });
 
-
-
 appDataSource
     .initialize()
     .then(() => {
-        console.log("Data Source has been initialized!")
+        console.log("Data Source has been initialized!");
     })
     .catch((err) => {
-        console.error("Error during Data Source initialization:", err)
+        console.error("Error during Data Source initialization:", err);
     })
 
 const app = express();
@@ -33,16 +31,14 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 
-app.get('/ping', function (req, res, next) {
-  res.json({ message: 'pong' });
+app.get('/ping', function (req, res)  {
+  res.json({ message : 'pong' });
 });
 
-
-app.post('/users', async function (req, res, next) {
- 
-  const { name,email,profile_image, password } = req.body;
-  
-    await appDataSource.query(
+app.post('/users', async function (req, res) {
+   const { name,email,profile_image, password } = req.body;
+   
+   await appDataSource.query(
       `
       INSERT INTO users (
         name,
@@ -50,20 +46,16 @@ app.post('/users', async function (req, res, next) {
         profile_image,
         password
       ) VALUES (
-        ?,
-        ?,
-        ?,
-        ?
+        ?,?,?,?
       )
     `,
-
+    [name, email,profile_image,password])
     
-      [name ,email,profile_image, password]
-    );
-    res.json({ message: 'Sign-up Complete, Welcome!!' });
+     res.json({ message: 'sign -up welcome!' });
+      });
 
-const port = process.env.PORT;
+const PORT = process.env.PORT 
 
-app.listen(port, function () {
-  console.log(`server listening on port ${port}`);
-})});
+app.listen(PORT, () => {
+  console.log(`server listening on port ${PORT}`);
+});
