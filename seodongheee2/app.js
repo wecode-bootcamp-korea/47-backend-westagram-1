@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-
-
 const express = require('express');
 const logger = require('morgan');
 const cors = require('cors');
@@ -18,9 +16,7 @@ const appDataSource = new DataSource({
   database: process.env.DB_DATABASE,
 });
 
-appDataSource.initialize().then(() => {
-  console.log('Data Source has been initialized!');
-});
+
 
 appDataSource
     .initialize()
