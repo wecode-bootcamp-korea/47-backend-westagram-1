@@ -68,37 +68,57 @@ app.post('/users/posts', async (req, res) => {
   res.status(201).json({ message: 'postCreated' });
 });
 
-app.get('/users/posts', async (req, res) => {
+app.get('/posts', async (req, res) => {
   try {
     const posts = await appDataSource.query(`
-      SELECT *
+      SELECT 
+        id,
+        user_id,
+        post_image,
+        post_paragraph
       FROM posts
     `);
 
     res.status(200).json({ data: posts });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ message: '정신 차려 상원아' });
+    res.status(400).json({ message: '400_BAD_REQUEST'});
   }
 });
 
-app.get('/users/posts/search', async (req, res) => {
+app.get('/users/:userID/posts', async (req, res) => {
   try {
+    const userID = req.params.userID;
+
     const viewPosts = await appDataSource.query(`
       SELECT
         users.id AS userId,
-        posts.id AS postingId,
-        posts.post_image AS postingImageUrl,
-        posts.post_paragraph AS postingContent
+        users.profile_image AS userProfileImage,
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'postingId', posts.id,
+            'postingImageUrl', posts.post_image,
+            'postingContent', posts.post_paragraph
+          )
+        ) AS postings
       FROM users
         INNER JOIN posts ON posts.user_id = users.id
-      Where 
-        users.id = 1
-`);
+      WHERE 
+        users.id = ?
+      GROUP BY users.id, users.profile_image
+    `, [userID]);
 
-    res.status(200).json({ data: viewPosts });
+    const transformedData = {
+      data: {
+        userId: viewPosts[0].userId,
+        userProfileImage: viewPosts[0].userProfileImage,
+        postings: JSON.parse(viewPosts[0].postings)
+      }
+    };
+
+    res.status(200).json(transformedData);
   } catch (error) {
     console.error(error);
-    res.status(400).json({ message: '정신차려 상원아' });
+    res.status(400).json({ message: '400_BAD_REQUEST'});
   }
 });
