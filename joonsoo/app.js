@@ -104,13 +104,49 @@ app.get('/posts', async function (req, res, next) {
   res.json({ data: posts });
 });
 
-app.get('')
+app.get('/users/:userId/posts', async function (req, res, next) {
+  const userId = req.params.userId;
 
+  try {
+    const users = await appDataSource.query(
+      `
+      SELECT
+        users.id AS userID,
+        users.profile_image AS userProfileImage,
+        posts.id AS postingId,
+        posts.title AS postingTitle,
+        posts.content AS postingContent
+      FROM users 
+      INNER JOIN posts ON users.id = posts.user_id
+      WHERE users.id = ?
+      `,
+      [userId]
+      );
+      
+      if (users.length === 0) {
+        return res.status(404).json({ message: 'USER_NOT_FOUND' });
+      }
 
-
-
-
-
+      const userData = {
+        userId: users[0].userId,
+        userProfileImage: users[0].userProfileImage,
+        postings: users.map((user) => ({
+          postingId: user.postingId,
+          postingTitle: user.postingTitle,
+          postingContent: user.postingContent
+        }))
+      };
+  
+      const responseData = {
+        data: userData
+      };
+  
+      res.json(responseData);
+    } catch (error) {
+      console.error('Error retrieving user posts:', error);
+      res.status(500).json({ message: 'FAILED_GET_USER_POSTS' });
+    }
+  });
 
 const port = process.env.PORT;
 app.listen(port, function () {
