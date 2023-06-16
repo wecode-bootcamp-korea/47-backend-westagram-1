@@ -52,5 +52,73 @@ app.post('/users/signup', async (req, res) => {
       ) VALUES ( ?, ?, ?, ?, ?);
       `, [name, email, profileImage, password, phoneNumber]
   );
-  res.status(201).json({ message: "sign-up complete" });
+});
+
+app.post('/users/posts', async (req, res) => {
+  const { userId, postImage, postText } = req.body;
+
+  await appDataSource.query(`
+    INSERT INTO posts (
+      user_id,
+      post_image,
+      post_paragraph
+    ) VALUES (?, ?, ?);
+  `, [userId, postImage, postText]);
+
+  res.status(201).json({ message: 'postCreated' });
+});
+
+app.get('/posts', async (req, res) => {
+  try {
+    const posts = await appDataSource.query(`
+      SELECT 
+        id,
+        user_id,
+        post_image,
+        post_paragraph
+      FROM posts
+    `);
+
+    res.status(200).json({ data: posts });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: '400_BAD_REQUEST'});
+  }
+});
+
+app.get("/users/:userID/posts", async (req, res) => {
+  try {
+    const userID = req.params.userID;
+    const viewPosts = await appDataSource.query(
+      `
+        SELECT
+          users.id AS userId,
+          users.profile_image AS userProfileImage,
+          JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'postingId', posts.id,
+              'postingImageUrl', posts.post_image,
+              'postingContent', posts.post_paragraph
+            )
+          ) AS postings
+        FROM users
+          INNER JOIN posts ON posts.user_id = users.id
+        WHERE
+          users.id = ?
+        GROUP BY users.id, users.profile_image
+      `,
+      [userID]
+    );
+
+    const [firstPost] = viewPosts;
+    const {userId, userProfileImage, postings } = firstPost || {};
+    res.status(200).json({
+      userId,
+      userProfileImage,
+      postings: postings ? JSON.parse(postings) : [],
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "400_BAD_REQUEST" });
+  }
 });
