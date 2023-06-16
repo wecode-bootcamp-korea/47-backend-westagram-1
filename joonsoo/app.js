@@ -29,16 +29,8 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 
-app.get('/users', async function (req, res, next) {
-  const users = await appDataSource.query(
-    `
-    SELECT
-      id,
-      email,
-      password
-    FROM users
-  `);
-  res.json({ data: users });
+app.get('/ping', function (req, res, next) {
+  res.json({ message: 'pong' });
 });
 
 app.post('/users', async function (req, res, next) {
