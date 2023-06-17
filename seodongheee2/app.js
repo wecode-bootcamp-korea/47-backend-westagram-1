@@ -103,7 +103,7 @@ app.listen(PORT, () => {
 
 
 app.get('/users/posts/:userId', async function (req, res) {
- //GET http:''127.0.0.1:3000/users/posts?userId=1      
+     
   const userId = req.params.userId;
   const userInfo = await appDataSource.query(
           `
