@@ -18,6 +18,6 @@ const signUp = async (req, res) => {
   }
 };
 
-module.export = {
+module.exports = {
   signUp,
 };

@@ -1,66 +1,32 @@
-require('dotenv').config();
+const http = require("node:http");
+const express = require("express");
+const cors = require("cors");
+const morgan = require("morgan");
 
-const express = require('express');
-const logger = require('morgan');
-const cors = require('cors');
-const { DataSource } = require('typeorm');
-
-const appDataSource = new DataSource({
-  type: process.env.DB_CONNECTION,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
-
-appDataSource
-    .initialize()
-    .then(() => {
-        console.log('Data Source has been initialized!');
-    })
-    .catch((err) => {
-        console.log("Error during Data Source initialization:", err);
-    });
+const dotenv = require("dotenv");
+dotenv.config();
+const routes = require("./routes");
 
 const app = express();
 
 app.use(cors());
-app.use(logger('dev'));
+app.use(morgan("combined"));
 app.use(express.json());
+app.use(routes);
 
-app.get('/ping', function (req, res, next) {
-  res.json({ message: 'pong' });
+app.get("/ping", (req, res) => {
+  res.json({ message: "pong" });
 });
 
-app.post('/users', async function (req, res, next) {
-  const { name, email, profileImage, password } = req.body;
-  
+const server = http.createServer(app);
+const PORT = process.env.PORT;
+
+const start = async () => {
   try {
-  await appDataSource.query(
-    `
-    INSERT INTO users(
-      name,
-      email,
-      profile_image,
-      password
-    ) VALUES (
-      ?,
-      ?,
-      ?,
-      ?
-    )
-  `,
-    [name, email, profileImage, password]
-  );
-  res.status(201).json({ message: 'SUCCESS_CREATE_USER' });
-} catch (error) {
-  console.error('ERROR_DURING_USER_CREATION:', error);
-  res.status(500).json({message: 'FAILED_CREATE_USER'});
-}
-});
+    server.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-const port = process.env.PORT;
-app.listen(port, function () {
-  console.log(`server listening on port ${port}`);
-});
+start();
