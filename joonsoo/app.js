@@ -15,13 +15,13 @@ const appDataSource = new DataSource({
 });
 
 appDataSource
-    .initialize()
-    .then(() => {
-        console.log('Data Source has been initialized!');
-    })
-    .catch((err) => {
-        console.log("Error during Data Source initialization:", err);
-    });
+  .initialize()
+  .then(() => {
+    console.log('Data Source has been initialized!');
+  })
+  .catch((err) => {
+    console.log('Error during Data Source initialization:', err);
+  });
 
 const app = express();
 
@@ -30,27 +30,15 @@ app.use(logger('dev'));
 app.use(express.json());
 
 app.get('/ping', function (req, res, next) {
-  res.json({ message: 'ping' });
+  res.json({ message: 'pong' });
 });
 
-app.get('/users', async function (req, res, next) {
-  const users = await appDataSource.query(
-    `
-    SELECT
-      id,
-      email,
-      password
-    FROM users
-  `);
-  res.json({ data: users });
-});
+app.post('/users', async function (req, res, next) {
+  const { name, email, profileImage, password } = req.body;
 
-app.post('/users', async function (req, res) {
-  console.log(req.body);
-  const { name, email, profile_image, password } = req.body;
-
-  await appDataSource.query(
-    `
+  try {
+    await appDataSource.query(
+      `
     INSERT INTO users(
       name,
       email,
@@ -63,9 +51,13 @@ app.post('/users', async function (req, res) {
       ?
     )
   `,
-    [name, email, profile_image, password]
-  );
-  res.json({ message: 'SUCCESS_CREATE_USER' });
+      [name, email, profileImage, password]
+    );
+    res.status(201).json({ message: 'SUCCESS_CREATE_USER' });
+  } catch (error) {
+    console.error('ERROR_DURING_USER_CREATION:', error);
+    res.status(500).json({ message: 'FAILED_CREATE_USER' });
+  }
 });
 
 app.post('/posts', async function (req, res) {
@@ -100,7 +92,8 @@ app.get('/posts', async function (req, res, next) {
 			posts.content As postingContent
     FROM posts
 		INNER JOIN users ON posts.user_id = users.id
-  `);
+  `
+  );
   res.json({ data: posts });
 });
 
@@ -121,32 +114,32 @@ app.get('/users/:userId/posts', async function (req, res, next) {
       WHERE users.id = ?
       `,
       [userId]
-      );
-      
-      if (users.length === 0) {
-        return res.status(404).json({ message: 'USER_NOT_FOUND' });
-      }
+    );
 
-      const userData = {
-        userId: users[0].userId,
-        userProfileImage: users[0].userProfileImage,
-        postings: users.map((user) => ({
-          postingId: user.postingId,
-          postingTitle: user.postingTitle,
-          postingContent: user.postingContent
-        }))
-      };
-  
-      const responseData = {
-        data: userData
-      };
-  
-      res.json(responseData);
-    } catch (error) {
-      console.error('Error retrieving user posts:', error);
-      res.status(500).json({ message: 'FAILED_GET_USER_POSTS' });
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'USER_NOT_FOUND' });
     }
-  });
+
+    const userData = {
+      userId: users[0].userId,
+      userProfileImage: users[0].userProfileImage,
+      postings: users.map((user) => ({
+        postingId: user.postingId,
+        postingTitle: user.postingTitle,
+        postingContent: user.postingContent,
+      })),
+    };
+
+    const responseData = {
+      data: userData,
+    };
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('Error retrieving user posts:', error);
+    res.status(500).json({ message: 'FAILED_GET_USER_POSTS' });
+  }
+});
 
 const port = process.env.PORT;
 app.listen(port, function () {
