@@ -30,7 +30,34 @@ app.use(logger('dev'));
 app.use(express.json());
 
 app.get('/ping', function (req, res, next) {
-  res.json({ message: 'ping' });
+  res.json({ message: 'pong' });
+});
+
+app.post('/users', async function (req, res, next) {
+  const { name, email, profileImage, password } = req.body;
+  
+  try {
+  await appDataSource.query(
+    `
+    INSERT INTO users(
+      name,
+      email,
+      profile_image,
+      password
+    ) VALUES (
+      ?,
+      ?,
+      ?,
+      ?
+    )
+  `,
+    [name, email, profileImage, password]
+  );
+  res.status(201).json({ message: 'SUCCESS_CREATE_USER' });
+} catch (error) {
+  console.error('ERROR_DURING_USER_CREATION:', error);
+  res.status(500).json({message: 'FAILED_CREATE_USER'});
+}
 });
 
 const port = process.env.PORT;
