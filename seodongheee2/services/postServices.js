@@ -1,12 +1,12 @@
 const postDao = require('../models/postDao')
 
-const createPost = async function (title, content, user_id, posting_image_url) {
+const createPost = async function (title, content, userId, postingImageUrl) {
 
     const createPosting = await postDao.createPosting(
         title,
         content,
-        user_id,
-        posting_image_url
+        userId,
+        postingImageUrl
     );
 
     return createPosting;
@@ -17,9 +17,6 @@ const postingData = async function(){
    return postData; 
 } ;
  
-
-
-
 
     module.exports = {
          createPost ,postingData

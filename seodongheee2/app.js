@@ -1,11 +1,9 @@
-const http = require('node:http');
+require("dotenv").config()
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const dotenv = require("dotenv")
-dotenv.config()
+const {appDataSource}=require("./models/dataSource")
 const routes = require("./routes");
-
 const app = express();
 
 
@@ -19,15 +17,17 @@ app.get("/ping", (req, res) => {
   res.json({ message: "pong" });
 });
 
-const server = http.createServer(app);
 const PORT = process.env.PORT;
 
-const start = async () => {
-  try {
-    server.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-start();
+app.listen(PORT, () => {
+  appDataSource
+    .initialize()
+    .then(() => {
+      console.log("Data Source has been initialized!");
+    })
+    .catch((err) => {
+      console.error("Error occurred during server startup", err);
+      appDataSource.destroy();
+    });
+  console.log(`Server is listening on ${PORT}`);
+});

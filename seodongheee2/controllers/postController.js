@@ -2,13 +2,13 @@ const postService = require('../services/postServices');
 
 const createPost = async (req, res) => {
   try {
-    const { title, content,user_id,posting_image_url } = req.body;
+    const { title, content,userId,postingImageUrl} = req.body;
 
-    if ( !title || !user_id ) {
+    if ( !title || !userId ) {
       return res.status(400).json({ message: 'Please Check Your Post' });
     }
 
-    await postService.createPost( title, content,user_id,posting_image_url );
+    await postService.createPost( title, content,userId,postingImageUrl );
     return res.status(201).json({
       message: 'POSTING CREATED_SUCCESS',
     });
@@ -18,12 +18,12 @@ const createPost = async (req, res) => {
   }
 };
 
-const postingData = async function(req,res) {
-    const postingD = await postService.postingData();
-    return res.status(200).json({ data: postingD});
+const getPostlist = async function(req,res) {
+    const postList = await postService.postingData();
+    return res.status(200).json({ data: postList});
 }
 
 module.exports = {
-	createPost,postingData
+	createPost,getPostlist
 }
 

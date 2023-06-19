@@ -1,38 +1,19 @@
-const { DataSource } = require('typeorm');
+const {appDataSource}=require("./dataSource");
 
-const appDataSource = new DataSource({
-    type: process.env.TYPEORM_CONNECTION,
-    host: process.env.TYPEORM_HOST,
-    port: process.env.TYPEORM_PORT,
-    username: process.env.TYPEORM_USERNAME,
-    password: process.env.TYPEORM_PASSWORD,
-    database: process.env.TYPEORM_DATABASE
-})
-
-appDataSource.initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
-  })
-  .catch((err) => {
-    console.error("Error occurred during Data Source initialization", err);
-	  appDataSource.destroy();
-  });
-
-
-const createPosting = async (title,content,user_id,posting_image_url) =>{
+const createPosting = async (title,content,userId,postingImageUrl) =>{
     try {  
           return await appDataSource.query(
            `
            INSERT INTO posts (
               title,
               content,
-              user_id,
-              posting_image_url
+              user_id AS userId ,
+              posting_image_url AS postingImageUrl
               ) VALUES (
               ?,?,?,?
              )
              `,
-         [title, content,user_id,posting_image_url]);
+         [title, content,userId,postingImageUrl]);
     }catch (err) {
      const error = new Error('INVALID_DATA_INPUT');
      error.statusCode = 500;
@@ -40,17 +21,17 @@ const createPosting = async (title,content,user_id,posting_image_url) =>{
  }
 };
 
-    const postdata = async function(){
-        return await appDataSource.query(
+const postdata = async function(){
+  return await appDataSource.query(
             `
           SELECT
             users.id AS userId,
-            users.profile_image AS userProfileImage,
+            users.profileImage AS userProfileImage,  
             posts.id AS postingId,
-            posts.posting_image_url AS PostingImageUrl,
+            posts.postingImageUrl AS PostingImageUrl,
             posts.content AS PostingContent
           FROM
-            users, posts
+            users,posts
           WHERE
             users.id = posts.id
           `)

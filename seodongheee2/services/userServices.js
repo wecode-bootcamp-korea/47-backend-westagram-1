@@ -1,7 +1,7 @@
 const { CustomRepositoryNotFoundError } = require('typeorm');
 const userDao = require('../models/userDao')
 
-const signUp = async(name,email,profile_image,password) =>{
+const signUp = async(name,email,profileImage,password) =>{
 
     const pwValidation = new RegExp(
         '^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,20})'
@@ -14,7 +14,7 @@ const signUp = async(name,email,profile_image,password) =>{
         const createUser = await userDao.createUser(
             name,
             email,
-            profile_image,
+            profileImage,
             password
           );
         
