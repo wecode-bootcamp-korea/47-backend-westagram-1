@@ -21,7 +21,7 @@ appDataSource.initialize()
 
   const createUser = async ( name, email, profile_image, password ) => {
     try {
-        return await myDataSource.query(
+        return await appDataSource.query(
         `INSERT INTO users(
             name,
             email,
