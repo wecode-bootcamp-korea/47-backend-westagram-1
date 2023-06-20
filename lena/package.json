@@ -16,7 +16,8 @@
     "express": "^4.18.2",
     "morgan": "^1.10.0",
     "mysql2": "^3.4.0",
-    "typeorm": "^0.3.16"
+    "typeorm": "^0.3.16",
+    "url": "^0.11.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
