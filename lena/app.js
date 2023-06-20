@@ -5,7 +5,8 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { DataSource } = require('typeorm')
+const { DataSource } = require('typeorm');
+const { error } = require('console');
 
 const appDataSource = new DataSource({
     type: process.env.DB_CONNECTION,
@@ -55,7 +56,7 @@ app.post('/signup', async (req, res) => {
 
 
 //posts
-app.post('/posty', async (req, res) => {
+app.post('/post', async (req, res) => {
     try {
         const {title, content, userId} = req.body;
 
@@ -75,7 +76,7 @@ app.post('/posty', async (req, res) => {
     }});
 
 //get all posts
-app.get('/allpost', async (req, res) => {
+app.get('/getallposts', async (req, res) => {
         await appDataSource.query(
             `SELECT 
              users.id as userId,
@@ -83,36 +84,16 @@ app.get('/allpost', async (req, res) => {
              posts.id as postingId,
              posts.content as postingContent
              FROM users
-             JOIN posts on users.id = posts.user_id
+             INNER JOIN posts on users.id = posts.user_id
              `,   (err, rows) => {
                res.status(200).json({"data": rows});
        
     });
 });
 
-/*
-//one user's posts
-app.get('/onepost', async (req, res) => {
-   // const givenid = req.params.id
-   // var queryData = url.parse(req.url, true).query;
-    await appDataSource.query(
-        `SELECT 
-         users.id as userId,
-         profile_image as userProfileImage,
-         posts.id as "postings.postingId",
-         posts.content as "postings.postingContent"
-         FROM users
-         JOIN posts on users.id = posts.user_id
-         WHERE users.id= 1`//, queryData['id']
-         ,   (err, rows) => {
-           res.status(200).json({"data": rows});
-   
-});
-});
-*/
 
-//req it by doing userid/49 (say 49 is the id num); this is just the format
-app.get('/userid/:id', async (req, res) => {
+//req it by doing getpostbyuser/userid/49 (say 49 is the id num); this is just the format
+app.get('/getpostbyuser/userid/:id', async (req, res) => {
     const givenid = req.params.id
     // var queryData = url.parse(req.url, true).query;
      try {
@@ -142,19 +123,87 @@ app.get('/userid/:id', async (req, res) => {
     }});
 
     
+//edit post
+app.post('/editpost/userid/:user_id/postid/:post_id/content/:new_content', async (req, res) => {
+    const new_content = req.params.new_content
+    const post_id = req.params.post_id
+    const user_id = req.params.user_id
 
-//test function just to help test
- app.get('/alldata', async (req, res) => {
-    // const givenid = req.params.id
-    // var queryData = url.parse(req.url, true).query;
-     await appDataSource.query(
-         `SELECT * from users
-          left join posts on posts.user_id = users.id`//, queryData['id']
-          ,   (err, rows) => {
-            res.status(200).json({"data": rows});
+    try {
+        await appDataSource.query(
+            `UPDATE posts
+            SET posts.content = ?
+            WHERE posts.id = ? and posts.user_id = ?`,
+            [new_content, post_id, user_id]
+        )
+
+        const newPost = await appDataSource.query(
+            `SELECT 
+            users.id as userId,
+            users.name as userName,
+            posts.id as postingId,
+            posts.title as postingTitle,
+            posts.content as postingContent
+            FROM users
+            INNER JOIN posts on posts.user_id = users.id
+            WHERE users.id = ? and posts.id = ?`, 
+            [user_id, post_id]
+        )
+
+        res.json({"data" : newPost})
     
- });
- });
+    } catch {
+        res.json({message: "Failed to edit post"})
+}});
+
+
+app.post('/deletepost/:id', async (req, res) => {
+    const post_id = req.params.id
+    try {
+        await appDataSource.query(
+            `DELETE FROM posts
+            WHERE posts.id = ?`,
+            [post_id]
+            )
+        res.json({message: "postingDeleted"})
+    } catch {
+        res.json("Failed to delete post")
+    }
+
+})
+
+app.post('/likepost/user/:user_id/post/:post_id', async (req, res) => {
+    const user_id = req.params.user_id
+    const post_id = req.params.post_id
+    try {
+        await appDataSource.query(
+            `INSERT INTO likes (
+                user_id,
+                post_id
+            ) VALUES (?, ?)`,
+            [user_id, post_id]
+            )
+        res.json({message: "likeCreated"})
+    } catch {
+        res.json("Failed to like post")
+    }
+}
+);
+
+
+
+// //test function just to help test
+//  app.get('/alldata', async (req, res) => {
+//     // const givenid = req.params.id
+//     // var queryData = url.parse(req.url, true).query;
+//      await appDataSource.query(
+//          `SELECT * from users
+//           inner join posts on posts.user_id = users.id`
+//           ,   (err, rows) => {
+//             res.status(200).json({"data": rows});
+    
+//  });
+//  });
 
 
 
