@@ -1,6 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/webstorm,vim,visualstudiocode,macos,linux,windows,zsh,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=webstorm,vim,visualstudiocode,macos,linux,windows,zsh,node
 
+.schema.sql
 ### Linux ###
 *~
 
