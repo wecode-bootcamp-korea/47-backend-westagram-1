@@ -1,48 +1,31 @@
 require('dotenv').config();
-
-
-
 const express = require('express');
-const logger = require('morgan');
 const cors = require('cors');
-
-const { DataSource } = require('typeorm');
-
-
-const appDataSource = new DataSource({
-  type: process.env.DB_CONNECTION,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
-
-appDataSource.initialize().then(() => {
-  console.log('Data Source has been initialized!');
-});
-
-appDataSource
-    .initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization:", err)
-    })
-
+const morgan = require('morgan');
+const { appDataSource } = require('./models/dataSource');
+const routes = require('./routes');
 const app = express();
 
 app.use(cors());
-app.use(logger('dev'));
+app.use(morgan('combined'));
 app.use(express.json());
+app.use(routes);
 
-app.get('/ping', function (req, res, next) {
+app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
 });
 
+const PORT = process.env.PORT;
 
-const port = process.env.PORT;
-app.listen(port, function () {
-  console.log(`server listening on port ${port}`);
+app.listen(PORT, () => {
+  appDataSource
+    .initialize()
+    .then(() => {
+      console.log('Data Source has been initialized!');
+    })
+    .catch((err) => {
+      console.error('Error occurred during server startup', err);
+      appDataSource.destroy();
+    });
+  console.log(`Server is listening on ${PORT}`);
 });
