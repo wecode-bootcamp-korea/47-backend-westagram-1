@@ -56,7 +56,7 @@ app.post('/signup', async (req, res) => {
 }});
 
 
-app.post('/post', async (req, res) => {
+app.post('/post/', async (req, res) => {
     try {
         const {title, content, userId} = req.body;
 
@@ -166,7 +166,7 @@ app.delete('/post/:postId', async (req, res) => {
 
 })
 
-app.post('/user/:userId/post/:postId/likes', async (req, res) => {
+app.post('/post/:postId/user/:userId/like', async (req, res) => {
     const userId = req.params.userId
     const postId = req.params.postId
     try {
