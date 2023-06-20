@@ -19,7 +19,7 @@ const createUser = async (name, email, profileImage, password) => {
   }
 };
 
-const personalPostD = async function (userId) {
+const personalPosting = async function (userId) {
   return await appDataSource.query(
     `
     SELECT
@@ -42,5 +42,5 @@ const personalPostD = async function (userId) {
 
 module.exports = {
   createUser,
-  personalPostD,
+  personalPosting,
 };

@@ -1,4 +1,3 @@
-const { CustomRepositoryNotFoundError } = require('typeorm');
 const userDao = require('../models/userDao');
 
 const signUp = async (name, email, profileImage, password) => {
@@ -20,11 +19,11 @@ const signUp = async (name, email, profileImage, password) => {
   return createUser;
 };
 
-const personalPostS = async function (userId) {
-  return await userDao.personalPostD(userId);
+const personalPoster = async function (userId) {
+  return await userDao.personalPosting(userId);
 };
 
 module.exports = {
   signUp,
-  personalPostS,
+  personalPoster,
 };

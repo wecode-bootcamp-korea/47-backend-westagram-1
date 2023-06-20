@@ -5,7 +5,7 @@ const createPost = async (req, res) => {
     const { title, content, userId, postingImageUrl } = req.body;
 
     if (!title || !userId) {
-      return res.status(400).json({ message: 'Please Check Your Post' });
+      return res.status(400).json({ message: 'Invalid_Request' });
     }
 
     await postService.createPost(title, content, userId, postingImageUrl);

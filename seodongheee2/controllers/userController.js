@@ -18,14 +18,14 @@ const signUp = async (req, res) => {
   }
 };
 
-const getUserPost = async function (req, res) {
+const getPostByUserId = async function (req, res) {
   const { userId } = req.params;
-  const userPost = await userService.personalPostS(userId);
+  const userPost = await userService.personalPoster(userId);
 
   return res.status(200).json({ data: userPost });
 };
 
 module.exports = {
   signUp,
-  getUserPost,
+  getPostByUserId,
 };

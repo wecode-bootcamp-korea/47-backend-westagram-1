@@ -12,7 +12,7 @@ const createPost = async function (title, content, userId, postingImageUrl) {
 };
 
 const postingData = async function () {
-  const postData = await postDao.postdata();
+  const postData = await postDao.getAllPost();
   return postData;
 };
 

@@ -22,7 +22,7 @@ const createPosting = async (title, content, userId, postingImageUrl) => {
   }
 };
 
-const postdata = async function () {
+const getAllPost = async function () {
   return await appDataSource.query(
     `
           SELECT
@@ -41,5 +41,5 @@ const postdata = async function () {
 
 module.exports = {
   createPosting,
-  postdata,
+  getAllPost,
 };

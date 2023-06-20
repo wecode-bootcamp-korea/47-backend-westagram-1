@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const postController = require('../controllers/postController');
 
-router.post('/posting', postController.createPost);
-router.get('/postdata', postController.getPostlist);
+router.post('', postController.createPost);
+router.get('/list', postController.getPostlist);
 
 module.exports = {
   router,
