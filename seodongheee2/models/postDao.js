@@ -1,9 +1,9 @@
-const {appDataSource}=require("./dataSource");
+const { appDataSource } = require('./dataSource');
 
-const createPosting = async (title,content,userId,postingImageUrl) =>{
-    try {  
-          return await appDataSource.query(
-           `
+const createPosting = async (title, content, userId, postingImageUrl) => {
+  try {
+    return await appDataSource.query(
+      `
            INSERT INTO posts (
               title,
               content,
@@ -13,17 +13,18 @@ const createPosting = async (title,content,userId,postingImageUrl) =>{
               ?,?,?,?
              )
              `,
-         [title, content,userId,postingImageUrl]);
-    }catch (err) {
-     const error = new Error('INVALID_DATA_INPUT');
-     error.statusCode = 500;
-     throw error;
- }
+      [title, content, userId, postingImageUrl]
+    );
+  } catch (err) {
+    const error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 500;
+    throw error;
+  }
 };
 
-const postdata = async function(){
+const postdata = async function () {
   return await appDataSource.query(
-            `
+    `
           SELECT
             users.id AS userId,
             users.profileImage AS userProfileImage,  
@@ -34,12 +35,11 @@ const postdata = async function(){
             users,posts
           WHERE
             users.id = posts.id
-          `)
+          `
+  );
+};
 
-        };
-      
-     
-
-module.exports={
-    createPosting ,postdata
-}
+module.exports = {
+  createPosting,
+  postdata,
+};

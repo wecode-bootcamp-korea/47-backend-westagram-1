@@ -2,13 +2,13 @@ const userService = require('../services/userServices');
 
 const signUp = async (req, res) => {
   try {
-    const { name, email, profileImage ,password } = req.body;
+    const { name, email, profileImage, password } = req.body;
 
-    if ( !name || !email || !password ) {
+    if (!name || !email || !password) {
       return res.status(400).json({ message: 'KEY_ERROR' });
     }
 
-    await userService.signUp( name, email,profileImage,password );
+    await userService.signUp(name, email, profileImage, password);
     return res.status(201).json({
       message: 'SIGNUP_SUCCESS',
     });
@@ -18,17 +18,14 @@ const signUp = async (req, res) => {
   }
 };
 
-const getUserPost= async function (req,res){
-  
-  const {userId} = req.params;
+const getUserPost = async function (req, res) {
+  const { userId } = req.params;
   const userPost = await userService.personalPostS(userId);
-  
-  return res.status(200).json({data : userPost })
- 
-}
+
+  return res.status(200).json({ data: userPost });
+};
 
 module.exports = {
-	signUp,getUserPost
-}
-
-
+  signUp,
+  getUserPost,
+};

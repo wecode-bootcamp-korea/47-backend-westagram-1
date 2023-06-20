@@ -1,24 +1,22 @@
-const postDao = require('../models/postDao')
+const postDao = require('../models/postDao');
 
 const createPost = async function (title, content, userId, postingImageUrl) {
+  const createPosting = await postDao.createPosting(
+    title,
+    content,
+    userId,
+    postingImageUrl
+  );
 
-    const createPosting = await postDao.createPosting(
-        title,
-        content,
-        userId,
-        postingImageUrl
-    );
-
-    return createPosting;
+  return createPosting;
 };
-    
-const postingData = async function(){
-    const postData = await postDao.postdata();
-   return postData; 
-} ;
- 
 
-    module.exports = {
-         createPost ,postingData
-    }
-   
+const postingData = async function () {
+  const postData = await postDao.postdata();
+  return postData;
+};
+
+module.exports = {
+  createPost,
+  postingData,
+};

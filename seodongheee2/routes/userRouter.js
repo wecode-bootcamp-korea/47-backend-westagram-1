@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 
-router.post('/signup',userController.signUp);
-router.get('/personalPost/:userId',userController.getUserPost)
+router.post('/signup', userController.signUp);
+router.get('/personalPost/:userId', userController.getUserPost);
 
 module.exports = {
-	router
-}
+  router,
+};
