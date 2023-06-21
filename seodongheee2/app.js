@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const { appDataSource } = require('./models/dataSource');
 const routes = require('./routes');
+const bcrypt = require('bcrypt');
 const app = express();
 
 app.use(cors());
