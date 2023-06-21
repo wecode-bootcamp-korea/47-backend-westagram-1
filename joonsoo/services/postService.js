@@ -1,8 +1,8 @@
-const postDao = require("../models/postDao");
+const postDao = require('../models/postDao');
 
-const creatingPost = async (title, content, user_id) => {
-  const createPost = await postDao.upload(title, content, user_id);
-  return createPost;
+const upload = async (title, content, userId) => {
+  const upload = await postDao.upload(title, content, userId);
+  return upload;
 };
 
 const getAllPosts = async function () {
@@ -14,12 +14,23 @@ const getAllPosts = async function () {
 const pickPosts = async function (userId) {
   // console.log(postDao.pickPosts(userId));
   const pickPosts = await postDao.pickPosts(userId);
-
   return pickPosts;
 };
 
+const rewritePost = async function (content, userId, postId) {
+  const rewritePost = await postDao.rewritePost(content, userId, postId);
+  return rewritePost;
+};
+
+const expurgatePost = async function (userId, postId) {
+  const expurgatePost = await postDao.expurgatePost(userId, postId);
+  return expurgatePost;
+};
+
 module.exports = {
-  creatingPost,
+  upload,
   getAllPosts,
   pickPosts,
+  rewritePost,
+  expurgatePost,
 };
