@@ -23,10 +23,10 @@ const showAllposts = async (req, res) => {
     }
   };
 
-const getPostById = async (req, res) => {
+const getUserPosts = async (req, res) => {
     try {
         const userId = req.params.userId;
-        const result = await postService.getPostById(userId);
+        const result = await postService.getUserPosts(userId);
         return res.status(200).json({message : "ExtractDataSuccess", userId, data: result});} 
 
     catch (error) {
@@ -50,6 +50,6 @@ const modifyPosts = async (req, res) => {
 module.exports = {
     createPosts,
     showAllposts,
-    getPostById,
+    getUserPosts,
     modifyPosts
 };

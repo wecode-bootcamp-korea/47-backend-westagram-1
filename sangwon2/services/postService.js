@@ -15,9 +15,9 @@ const showAllposts = async (req, res) => {
     return showAllposts
 };
 
-const getPostById = async (userId) => {
-    const getPostById = await postDao.getPostById(userId);
-    return getPostById
+const getUserPosts = async (userId) => {
+    const getUserPosts = await postDao.getUserPosts(userId);
+    return getUserPosts
 };
 
 const modifyPosts = async (userId, postId, postText) => {
@@ -28,6 +28,6 @@ const modifyPosts = async (userId, postId, postText) => {
 module.exports = {
     createPosts,
     showAllposts,
-    getPostById,
+    getUserPosts,
     modifyPosts
 }

@@ -39,7 +39,7 @@ const showAllposts = async (userId, postImage, postText) => {
     }
   };
 
-const getPostById = async (userId) => {
+const getUserPosts = async (userId) => {
     try {
       const result = await appDataSource.query(
         `
@@ -62,17 +62,15 @@ const getPostById = async (userId) => {
         [userId]
       );
 
-      if (result.length > 0) {
+      {
         const firstPost = result[0];
         const { userId, userProfileImage, postings } = firstPost;
         const parsedPostings = JSON.parse(postings);
         return { userId, userProfileImage, postings: parsedPostings };
-      } 
-      else {
-        return null;
-      }
-    } catch (error) {
-      console.error(error);
+      }  
+    } catch (err) {
+      const error = new Error("INVALID_USERID");
+      error.statusCode = 400;
       throw error;
     }
   };
@@ -98,6 +96,6 @@ const modifyPosts = async (userId, postId, postText) => {
   module.exports = {
     createPosts,
     showAllposts,
-    getPostById,
+    getUserPosts,
     modifyPosts
   };
