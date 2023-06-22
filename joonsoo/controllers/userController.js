@@ -2,7 +2,12 @@ const userService = require('../services/userService');
 
 const signUp = async (req, res) => {
   try {
-    const { name, email, profileImage, password } = req.body;
+    const {
+      name = 'DEF_VAL',
+      email,
+      profileImage = 'DEF_VAL',
+      password,
+    } = req.body;
     await userService.signUp(name, email, profileImage, password);
     return res.status(201).json({ message: 'SUCCESS_USER_CREATION' });
   } catch (error) {
@@ -17,7 +22,9 @@ const signIn = async (req, res) => {
     const passwordMatched = await userService.signIn(email, password);
 
     if (passwordMatched) {
-      return res.status(201).json({ message: 'LOGIN_SUCCESS' });
+      return res
+        .status(201)
+        .json({ message: 'LOGIN_SUCCESS', TOKEN: 'qwyeuiroqywueirohqwuie' });
     } else {
       return res.status(401).json({ message: 'Unauthorized' });
     }
