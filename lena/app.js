@@ -1,10 +1,70 @@
-//built-in package
+
+const http = require("http");
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
+
+const dotenv = require("dotenv")
+dotenv.config()
+
+const routes = require("./routes");
+
+const app = express();
+
+app.use(cors());
+app.use(morgan('combined'));
+app.use(express.json());
+app.use(routes);
+
+app.get("/ping", (req, res) => {
+  res.json({ message: "pong" });
+});
+
+const server = http.createServer(app);
+const PORT = process.env.PORT;
+
+const start = async () => {
+  try {
+    server.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+start();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+/built-in package
 const http = require('http');
 
 // 3rd party package
 const dotenv = require('dotenv');
 dotenv.config();
-const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const { DataSource } = require('typeorm');
@@ -28,6 +88,7 @@ appDataSource.initialize().then(() => {
 app.use(express.json());
 app.use(cors())
 app.use(morgan('dev'))
+app.use(routes);
 
 app.get('/ping', function (req, res, next) {
     res.status(400).json({message: 'pong'})
@@ -56,7 +117,7 @@ app.post('/signup', async (req, res) => {
 }});
 
 
-app.post('/post/', async (req, res) => {
+app.post('/post', async (req, res) => {
     try {
         const {title, content, userId} = req.body;
 
@@ -193,3 +254,6 @@ const start = async() => {
 }
    
 start()
+
+
+*/
