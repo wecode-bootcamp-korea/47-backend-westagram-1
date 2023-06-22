@@ -1,4 +1,3 @@
-// const { myDataSource } = require('../models/dataSource');
 const userService = require('../services/userService');
 
 const signUp = async (req, res) => {
@@ -8,22 +7,27 @@ const signUp = async (req, res) => {
     return res.status(201).json({ message: 'SUCCESS_USER_CREATION' });
   } catch (error) {
     console.error('ERROR_DURING_USER_CREATION: ', error);
-    return res.status(err.statusCode || 500).json({ message: err.message });
+    return res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
 
-    //   const { name, email, password, profileImage } = req.body;
+const signIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const passwordMatched = await userService.signIn(email, password);
 
-    //   // if (!name || !email || !password || !profileImage) {
-    //   //   return res.status(400).json({ message: "KEY_ERROR" });
-    //   // }
-
-    //   await userService.signUp(name, email, password, profileImage);
-    //   return res.status(201).json({ message: 'SIGNUP_SUCCESS' });
-    // } catch (error) {
-    //   console.error('ERROR_DURING_USERCREATION');
-    //   return res.status(500).json({ message: '실패!!!!' });
+    if (passwordMatched) {
+      return res.status(201).json({ message: 'LOGIN_SUCCESS' });
+    } else {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+  } catch (error) {
+    console.error('ERROR_DURING_LOGIN: ', error);
+    return res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
 module.exports = {
   signUp,
+  signIn,
 };

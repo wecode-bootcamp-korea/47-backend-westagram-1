@@ -1,6 +1,6 @@
 const { myDataSource } = require('./dataSource');
 
-const signUp = async (name, email, profileImage, password) => {
+const signUp = async (name, email, profileImage, hashedPassword) => {
   try {
     await myDataSource.query(
       `
@@ -14,8 +14,27 @@ const signUp = async (name, email, profileImage, password) => {
               VALUES 
               (?, ?, ?, ?);
             `,
-      [name, email, profileImage, password]
+      [name, email, profileImage, hashedPassword]
     );
+  } catch (err) {
+    const error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
+const signIn = async (email) => {
+  try {
+    const userPassword = await myDataSource.query(
+      `
+        SELECT
+          password
+        FROM users
+        WHERE email = ? 
+      `,
+      [email]
+    );
+    return userPassword;
   } catch (err) {
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
@@ -25,4 +44,5 @@ const signUp = async (name, email, profileImage, password) => {
 
 module.exports = {
   signUp,
+  signIn,
 };
