@@ -99,7 +99,7 @@ const likePost = async (req, res) => {
 
 
     
-    module.exports = {
+module.exports = {
 	writePost,
   getAllPosts,
   getUserPosts,

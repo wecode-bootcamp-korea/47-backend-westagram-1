@@ -50,12 +50,6 @@ const likePost = async (postId, userId) => {
     return likedPost;
   };
 
-
-
-
-
-
-
 module.exports = {
     writePost,
     getAllPosts,
