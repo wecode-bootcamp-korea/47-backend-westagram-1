@@ -20,7 +20,6 @@ const createUser = async ( name, email, profileImage, password ) => {
 	}
 };
 
-
 const verifyUser = async ( email) => {
 	try {
 		return await dataSource.appDataSource.query(

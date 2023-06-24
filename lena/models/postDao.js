@@ -17,8 +17,6 @@ const createPost = async (title, content, userId) => {
     throw error;
 }}
 
-
-
 const allPosts = async () => {
   try {
     return await dataSource.appDataSource.query(
@@ -37,7 +35,6 @@ const allPosts = async () => {
     error.statusCode = 400;
     throw error;
 }}
-
 
 const userPosts = async(userId) => {
   try {
@@ -68,36 +65,36 @@ const userPosts = async(userId) => {
     throw error;
   }}
 
-  const updatedPost = async (postId, content) => {
-    try {
-        await dataSource.appDataSource.query(
-            `UPDATE posts
-            SET posts.content = ?
-            WHERE posts.id = ?`,
-            [content, postId]
-        )
-  
-        const newPost = await dataSource.appDataSource.query(
-            `SELECT 
-            users.id as userId,
-            users.name as userName,
-            posts.id as postingId,
-            posts.title as postingTitle,
-            posts.content as postingContent
-            FROM users
-            INNER JOIN posts on posts.user_id = users.id
-            WHERE posts.id = ?`, 
-            [postId]
-        )
+const updatedPost = async (postId, content) => {
+  try {
+      await dataSource.appDataSource.query(
+          `UPDATE posts
+          SET posts.content = ?
+          WHERE posts.id = ?`,
+          [content, postId]
+      )
 
-        return newPost;
+      const newPost = await dataSource.appDataSource.query(
+          `SELECT 
+          users.id as userId,
+          users.name as userName,
+          posts.id as postingId,
+          posts.title as postingTitle,
+          posts.content as postingContent
+          FROM users
+          INNER JOIN posts on posts.user_id = users.id
+          WHERE posts.id = ?`, 
+          [postId]
+      )
 
-      } catch (err) {
-        const error = new Error('INVALID_DATA_INPUT');
-        error.statusCode = 400;
-        throw error;
-      }
+      return newPost;
+
+    } catch (err) {
+      const error = new Error('INVALID_DATA_INPUT');
+      error.statusCode = 400;
+      throw error;
     }
+  }
 
 const deletedPost = async (postId) => {
   try {

@@ -97,8 +97,6 @@ const likePost = async (req, res) => {
   }
 };
 
-
-    
 module.exports = {
   writePost,
   getAllPosts,
