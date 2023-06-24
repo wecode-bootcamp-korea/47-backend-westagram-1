@@ -1,34 +1,33 @@
-const { DataSource } = require('typeorm');
-
-const appDataSource = new DataSource({
-    type: process.env.DB_CONNECTION,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE
-})
-
-appDataSource.initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
-  })
-  .catch((err) => {
-    console.error("Error occurred during Data Source initialization", err);
-	  appDataSource.destroy();
-  });
+const dataSource = require('./dataSource');
 
 const createUser = async ( name, email, profileImage, password ) => {
 	try {
-		return await appDataSource.query(
+		return await dataSource.appDataSource.query(
 		`INSERT INTO users(
 		    name,
 		    email,
-		    profileImage,
-		    password,
+		    profile_image,
+		    password
 		) VALUES (?, ?, ?, ?);
 		`,
 		[ name, email, profileImage, password ]
+	  );
+	} catch (err) {
+		console.log(err)
+		const error = new Error('INVALID_DATA_INPUT');
+		error.statusCode = 500;
+		throw error;
+	}
+};
+
+
+const verifyUser = async ( email) => {
+	try {
+		return await dataSource.appDataSource.query(
+		`SELECT password FROM users 
+		where email = ?
+		`,
+		[email]
 	  );
 	} catch (err) {
 		const error = new Error('INVALID_DATA_INPUT');
@@ -38,5 +37,6 @@ const createUser = async ( name, email, profileImage, password ) => {
 };
 
 module.exports = {
-  createUser
+  createUser,
+  verifyUser
 }

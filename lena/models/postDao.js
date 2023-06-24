@@ -1,28 +1,8 @@
-const { DataSource } = require('typeorm');
-
-const appDataSource = new DataSource({
-  type: process.env.DB_CONNECTION,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE
-})
-
-appDataSource.initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
-  })
-  .catch((err) => {
-    console.error("Error occurred during Data Source initialization", err);
-	  appDataSource.destroy();
-  });
-
-
+const dataSource = require('./dataSource');
 
 const createPost = async (title, content, userId) => {
   try {
-    return await appDataSource.query(
+    return await dataSource.appDataSource.query(
         `INSERT INTO posts (
             title,
             content,
@@ -41,7 +21,7 @@ const createPost = async (title, content, userId) => {
 
 const allPosts = async () => {
   try {
-    return await appDataSource.query(
+    return await dataSource.appDataSource.query(
       `
       SELECT 
       users.id as userId,
@@ -61,7 +41,7 @@ const allPosts = async () => {
 
 const userPosts = async(userId) => {
   try {
-    const inner = await appDataSource.query(
+    const inner = await dataSource.appDataSource.query(
           
       `SELECT 
        users.id as userId,
@@ -88,20 +68,16 @@ const userPosts = async(userId) => {
     throw error;
   }}
 
-
-
-
-
   const updatedPost = async (postId, content) => {
     try {
-        await appDataSource.query(
+        await dataSource.appDataSource.query(
             `UPDATE posts
             SET posts.content = ?
             WHERE posts.id = ?`,
             [content, postId]
         )
   
-        const newPost = await appDataSource.query(
+        const newPost = await dataSource.appDataSource.query(
             `SELECT 
             users.id as userId,
             users.name as userName,
@@ -125,7 +101,7 @@ const userPosts = async(userId) => {
 
 const deletedPost = async (postId) => {
   try {
-    return await appDataSource.query(
+    return await dataSource.appDataSource.query(
       `DELETE FROM posts
       WHERE posts.id = ?`,
       [postId]
@@ -135,12 +111,10 @@ const deletedPost = async (postId) => {
     error.statusCode = 400;
     throw error;
 }}
-    
-
 
 const likedPost = async (postId, userId) => {
   try {
-    return await appDataSource.query(
+    return await dataSource.appDataSource.query(
         `INSERT INTO likes (
             user_id,
             post_id
@@ -153,9 +127,6 @@ const likedPost = async (postId, userId) => {
     error.statusCode = 400;
     throw error;
 }}
-
-
-
 
   module.exports = {
     createPost,
